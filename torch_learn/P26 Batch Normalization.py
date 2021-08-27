@@ -12,7 +12,7 @@ BATCH_SIZE = 64
 EPOCH = 12
 LR = 0.03
 N_HIDDEN = 8
-ACTIVATION = torch.tanh
+ACTIVATION = torch.relu
 B_INIT = -0.2   # use a bad bias constant initializer
 
 class Net(nn.Module):
@@ -56,6 +56,8 @@ class Net(nn.Module):
         return out, pre_activation, layer_input
 
 def plot_histogram(l_in, l_in_bn, pre_ac, pre_ac_bn):
+    # plot initialization
+    f, axs = plt.subplots(4, N_HIDDEN + 1, figsize=(10, 5))
     for i, (ax_pa, ax_pa_bn, ax, ax_bn) in enumerate(zip(axs[0, :], axs[1, :], axs[2, :], axs[3, :])):
         [a.clear() for a in [ax_pa, ax_pa_bn, ax, ax_bn]]
         if i == 0:
@@ -68,7 +70,7 @@ def plot_histogram(l_in, l_in_bn, pre_ac, pre_ac_bn):
         for a in [ax_pa, ax, ax_pa_bn, ax_bn]: a.set_yticks(());a.set_xticks(())
         ax_pa_bn.set_xticks(p_range);ax_bn.set_xticks(the_range)
         axs[0, 0].set_ylabel('PreAct');axs[1, 0].set_ylabel('BN PreAct');axs[2, 0].set_ylabel('Act');axs[3, 0].set_ylabel('BN Act')
-    plt.pause(0.01)
+    plt.show()
 
 
 if __name__ == '__main__':
@@ -99,11 +101,6 @@ if __name__ == '__main__':
     print(*nets)
     opts = [torch.optim.Adam(net.parameters(), lr=LR) for net in nets]
     loss_func = nn.MSELoss()
-
-    # plot initialization
-    f, axs = plt.subplots(4, N_HIDDEN + 1, figsize=(10, 5))
-    plt.ion()
-    plt.show()
 
     # training
     losses = [[], []]
